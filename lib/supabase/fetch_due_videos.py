@@ -1,35 +1,43 @@
 """
-Module for fetching videos that are due for publishing from the video_schedule table.
+Functions for fetching videos scheduled for publishing.
 """
 
+import os
+import logging
+from datetime import datetime, timezone
 from typing import List, Dict, Any
-from datetime import datetime
-from .supabase_client import supabase
+
+from .client import supabase
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def fetch_due_videos() -> List[Dict[str, Any]]:
     """
-    Fetch all unpublished videos that are due for publishing (scheduled_at <= current time).
+    Fetch videos that are due for publishing.
     
     Returns:
-        List[Dict[str, Any]]: List of video schedule entries that are due for publishing.
-        Each entry contains all columns from the video_schedule table.
-        
-    Raises:
-        Exception: If the Supabase query fails
+        List[Dict[str, Any]]: List of video dictionaries
     """
-    # Use UTC time for consistency across different timezones
-    now = datetime.utcnow().isoformat()
-
     try:
+        # Get current time in UTC
+        now = datetime.now(timezone.utc).isoformat()
+        
+        # Query for videos that are:
+        # 1. Not yet published
+        # 2. Scheduled time is in the past
         response = supabase.table("video_schedule") \
             .select("*") \
             .eq("published", False) \
             .lte("scheduled_at", now) \
-            .order("scheduled_at") \
             .execute()
-
-        # The response data is directly in the response object
-        return response.data
-    
+            
+        videos = response.data
+        logger.info(f"Found {len(videos)} videos due for publishing")
+        
+        return videos
+        
     except Exception as e:
-        raise Exception(f"Failed to fetch due videos: {str(e)}")
+        logger.error(f"Error fetching due videos: {str(e)}")
+        return []

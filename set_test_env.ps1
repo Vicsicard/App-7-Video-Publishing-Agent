@@ -1,0 +1,4 @@
+$env:SUPABASE_URL="https://aqicztygjpmunfljjuto.supabase.co"
+$env:SUPABASE_PROJECT_ID="aqicztygjpmunfljjuto"
+$env:SUPABASE_SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxaWN6dHlnanBtdW5mbGpqdXRvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MzcwNTU4MiwiZXhwIjoyMDU5MjgxNTgyfQ.lIfnbWUDm8yDz1g_gQJNi56rCiGRAunY48rgVAwLID4"
+python tests/e2e_publish_test.py

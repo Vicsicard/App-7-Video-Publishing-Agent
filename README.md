@@ -95,6 +95,44 @@ Each manifest includes:
 - manifest_url (text)
 - publish_manifest (text)
 
+## Debugging Notes
+
+### Video Upload Issues
+Common issues and solutions for video upload problems:
+
+1. Authentication Errors
+- Check that SUPABASE_SERVICE_ROLE_KEY is properly set
+- Verify RLS policies are correctly configured
+- Use service role authentication for storage operations
+
+2. Status Update Issues
+- Ensure video_schedule table has correct RLS policies
+- Check that service role has necessary permissions
+- Verify update queries include correct filters
+
+### Recent Updates (2025-04-07)
+
+1. Improved Authentication
+- Centralized header configuration with `get_supabase_headers()`
+- Consistent service role key usage across all requests
+- Added option to include/exclude `return=representation` header
+
+2. Enhanced Error Handling
+- Added comprehensive error logging for database operations
+- Improved policy-related issue detection
+- Better error messages with request context
+- Added logging for silent failures
+
+3. Code Improvements
+- Centralized Supabase header management
+- Removed redundant header configurations
+- Updated video storage to use centralized auth
+- Enhanced cleanup function error handling
+
+## Known Issues
+
+None currently. All tests passing as of 2025-04-07.
+
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 

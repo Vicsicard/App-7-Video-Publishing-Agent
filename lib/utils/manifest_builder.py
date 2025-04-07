@@ -41,64 +41,40 @@ def get_platform_emoji(platform: str) -> str:
     return platform_emojis.get(platform.lower(), '📄')
 
 def generate_publish_manifest(
-    transcript_id: str,
-    platform: str,
+    video: dict,
     publish_url: str,
-    scheduled_at: str,
-    published_at: str,
-    status: str = "✅ Success",
-    additional_info: Optional[Dict[str, Any]] = None
+    embed_code: str = None,
+    status: str = "Success"
 ) -> str:
     """
-    Generate a markdown-formatted publishing manifest.
+    Generate a markdown manifest for a published video.
     
     Args:
-        transcript_id: ID of the transcript/video
-        platform: Publishing platform (youtube, facebook, instagram, website)
-        publish_url: URL where the content was published
-        scheduled_at: When the publish was scheduled (ISO format)
-        published_at: When the publish completed (ISO format)
-        status: Publishing status (default: "✅ Success")
-        additional_info: Optional dictionary of additional information to include
+        video: Video metadata dictionary
+        publish_url: URL where video was published
+        embed_code: Optional HTML embed code
+        status: Status message to include
         
     Returns:
-        str: Formatted markdown manifest
-        
-    Example:
-        >>> manifest = generate_publish_manifest(
-        ...     "vid123",
-        ...     "youtube",
-        ...     "https://youtu.be/abc123",
-        ...     "2025-04-04T18:00:00",
-        ...     "2025-04-04T18:01:23",
-        ...     additional_info={"views": 0, "likes": 0}
-        ... )
+        str: Markdown formatted manifest
     """
-    platform_emoji = get_platform_emoji(platform)
-    formatted_scheduled = format_datetime(scheduled_at)
-    formatted_published = format_datetime(published_at)
-    
-    manifest = f"""# Publishing Summary {platform_emoji}
+    manifest = f"""# Video Publishing Manifest
 
-**Transcript ID**: {transcript_id}  
-**Platform**: {platform.title()}  
-**Scheduled At**: {formatted_scheduled}  
-**Published At**: {formatted_published}  
-**URL**: {publish_url}  
-**Status**: {status}"""
+## Video Details
+- Transcript ID: {video['transcript_id']}
+- Platform: {video['platform']}
+- Scheduled At: {video['scheduled_at']}
+- Published At: {datetime.utcnow().isoformat()}
 
-    # Add any additional information
-    if additional_info:
-        manifest += "\n\n## Additional Information\n"
-        for key, value in additional_info.items():
-            manifest += f"\n**{key.title()}**: {value}"
-            
-    # Add platform-specific notes
-    if platform.lower() == 'website':
-        manifest += "\n\n## Embed Code\n```html\n"
-        manifest += f'<video controls width="640" height="360">\n'
-        manifest += f'    <source src="{publish_url}" type="video/mp4">\n'
-        manifest += f'    Your browser does not support the video tag.\n'
-        manifest += f'</video>\n```'
-    
+## Publishing Details
+- Status: {status}
+- Public URL: {publish_url}
+
+## Storage Details
+- Storage Path: {video.get('storage_path', 'N/A')}
+"""
+
+    if embed_code:
+        manifest += f"\n## Embed Code\n```html\n{embed_code}\n```"
+        
     return manifest
